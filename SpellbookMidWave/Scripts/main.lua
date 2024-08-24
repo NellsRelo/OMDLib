@@ -4,8 +4,8 @@ local OMDLib = require("OMDLib")
 IsInitialized = false
 
 function Init()
-  userSettings = OMDLib.GetGameUserSettings()
-  userSettings:SetLeaderboardOptOut(true)
+  -- userSettings = OMDLib.GetGameUserSettings()
+  -- userSettings:SetLeaderboardOptOut(true)
   IsInitialized = true
 end
 
