@@ -10,7 +10,6 @@ Init()
 
 -- Ensure Random Buff Choices are loaded before we try to create them
 ExecuteInGameThread(function()
-  LoadAsset("/Game/UI/Postgame/UBP_Postgame_C.UBP_Postgame_C")
   LoadAsset("/Game/UI/Postgame/UBP_Postgame_RandomModeBuffChoice.UBP_Postgame_RandomModeBuffChoice_C")
 end)
 
@@ -28,22 +27,20 @@ function createModifier(modifierProto, xPos)
   if not modifier:IsValid() then
     print("Error creating modifier")
   else
-    print("Modifier created")
-  end
-  
-  local pos = UEHelpers.GetKismetMathLibrary():MakeVector2D(xPos, 500)
-  modifier.OMDSoftProtoPtr = modifierProto
-  modifier.OMDGameInstance = OMDLib.GetGameInstance()
-  OMDLib.GetProtoBpLibrary():GetModifierProtodata(modifierProto, modifier.ModifierProto, {})
-  -- print(#getModifierProto)
-  -- print(#getModifierSuccess)
-  print(tostring(OMDLib.Type.FGuid.ToString(modifierProto.Guid)))
-  modifier:Setup(modifierProto, nil, nil)
-  modifier:Construct()
-  modifier:SetPositionInViewport(pos, true)
-  modifier:AddToViewport(1)
+    local pos = UEHelpers.GetKismetMathLibrary():MakeVector2D(xPos, 500)
 
-  return modifier
+    modifier.OMDSoftProtoPtr = modifierProto
+    modifier.OMDGameInstance = OMDLib.GetGameInstance()
+    OMDLib.GetProtoBpLibrary():GetModifierProtodata(modifierProto, modifier.ModifierProto, {})
+
+    print(tostring(OMDLib.Type.FGuid.ToString(modifierProto.Guid)))
+    modifier:Setup(modifierProto, nil, nil)
+    modifier:Construct()
+    modifier:SetPositionInViewport(pos, 450)
+    modifier:AddToViewport(1)
+
+    return modifier
+  end
 end
 
 
@@ -58,44 +55,22 @@ local function RetrieveBuffPointers()
 
   return pointers
 end
---- Testing capability to display Random Mode buffs outside of Random Mode
-RegisterKeyBind(Key.K, {}, function()
+
+local function displayBuffCards()
   OMDLib.GetGameInstance():InitializeRandomMode()
-  local xPos = 550
+  local xPos = 600
   local pointers = RetrieveBuffPointers()
-
-  for _, v in pairs(pointers) do
-    -- @class FGuid
-    local guid = OMDLib.Type.FGuid.construct(
-      v.Guid.A,
-      v.Guid.B,
-      v.Guid.C,
-      v.Guid.D
-    )
-
+  for _, pointer in pairs(pointers) do
     -- @class FOMDSoftProtoPtr
-    local OMDSoftProtoPtr = OMDLib.Type.FOMDSoftProtoPtr.construct(guid)
+    local OMDSoftProtoPtr = OMDLib.Type.FOMDSoftProtoPtr.UserdataToStruct(pointer)
+
     createModifier(OMDSoftProtoPtr, xPos)
     xPos = xPos + 450
-    --print(tostring(OMDLib.GetProtoBpLibrary():IsValid_OMDSoftProtoPtr(OMDSoftProtoPtr)))
+    print(tostring(OMDLib.GetProtoBpLibrary():IsValid_OMDSoftProtoPtr({Guid = "rF9gvimPSUN62AAAeE9FYA"})))
   end
+end
 
-  -- local OMDSoftProtoPtr = {
-  --   Guid = {}
-  -- }
-  -- local getModifierProto = {}
-  -- local getModifierSuccess = {}
-
-  -- OMDSoftProtoPtr.Guid.A = v:get().Guid.A or 0
-  -- OMDSoftProtoPtr.Guid.B = v:get().Guid.B or 0
-  -- OMDSoftProtoPtr.Guid.C = v:get().Guid.C or 0
-  -- OMDSoftProtoPtr.Guid.D = v:get().Guid.D or 0
-  -- --
-    
-
-  -- 
-  -- for _,pval in pairs(getModifierProto) do
-  --   print(tostring(pval))
-  -- end
-  -- 
+--- Testing capability to display Random Mode buffs outside of Random Mode
+RegisterKeyBind(Key.K, {}, function()
+  displayBuffCards()
 end)
