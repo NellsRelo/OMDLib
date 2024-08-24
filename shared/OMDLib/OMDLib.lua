@@ -1,7 +1,7 @@
 local UEHelpers = require("UEHelpers")
 local OMDLib = {}
-OMDLib.Utils = require("OMDLib.Utils.main")
-OMDLib.Type = require("OMDLib.Types.main")
+OMDLib.Utils = require("OMDLib.Utils._init")
+OMDLib.Type = require("OMDLib.Types._init")
 
 -- Version 1 does not exist, we start at version 2 because the original version didn't have a version at all.
 local Version = 1
